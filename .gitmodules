@@ -1,0 +1,3 @@
+[submodule "PSKit"]
+	path = Rolodex/PSKit
+	url = git@github.com:ptshih/PSKit.git
