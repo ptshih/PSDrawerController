@@ -129,6 +129,8 @@
 		28B855F5147CE5AA004F84EA /* BackgroundNavigationBar.png in Resources */ = {isa = PBXBuildFile; fileRef = 28B855F2147CE5AA004F84EA /* BackgroundNavigationBar.png */; };
 		28B855F6147CE5AA004F84EA /* BackgroundNavigationBar@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 28B855F3147CE5AA004F84EA /* BackgroundNavigationBar@2x.png */; };
 		28B855F7147CE5AA004F84EA /* BackgroundNavigationBar~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 28B855F4147CE5AA004F84EA /* BackgroundNavigationBar~ipad.png */; };
+		28E94A8F147DB32D002E8343 /* MenuCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 28E94A8E147DB32D002E8343 /* MenuCell.m */; };
+		28E94A92147DB33C002E8343 /* RolodexViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 28E94A91147DB33C002E8343 /* RolodexViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -348,6 +350,10 @@
 		28B855F2147CE5AA004F84EA /* BackgroundNavigationBar.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = BackgroundNavigationBar.png; sourceTree = "<group>"; };
 		28B855F3147CE5AA004F84EA /* BackgroundNavigationBar@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "BackgroundNavigationBar@2x.png"; sourceTree = "<group>"; };
 		28B855F4147CE5AA004F84EA /* BackgroundNavigationBar~ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "BackgroundNavigationBar~ipad.png"; sourceTree = "<group>"; };
+		28E94A8D147DB32D002E8343 /* MenuCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MenuCell.h; sourceTree = "<group>"; };
+		28E94A8E147DB32D002E8343 /* MenuCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MenuCell.m; sourceTree = "<group>"; };
+		28E94A90147DB33C002E8343 /* RolodexViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RolodexViewController.h; sourceTree = "<group>"; };
+		28E94A91147DB33C002E8343 /* RolodexViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RolodexViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -411,6 +417,7 @@
 		283818C814723F1D007E4827 /* Rolodex */ = {
 			isa = PBXGroup;
 			children = (
+				28E94A8B147DB30E002E8343 /* Views */,
 				28B855DA147CDCC4004F84EA /* Controllers */,
 				283818D114723F1D007E4827 /* AppDelegate.h */,
 				283818D214723F1D007E4827 /* AppDelegate.m */,
@@ -920,6 +927,8 @@
 		28B855DA147CDCC4004F84EA /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				28E94A90147DB33C002E8343 /* RolodexViewController.h */,
+				28E94A91147DB33C002E8343 /* RolodexViewController.m */,
 				28B855DB147CDCE6004F84EA /* ProfileViewController.h */,
 				28B855DC147CDCE6004F84EA /* ProfileViewController.m */,
 				28B855DE147CDDE8004F84EA /* MenuViewController.h */,
@@ -928,6 +937,15 @@
 				28B855EC147CE1A3004F84EA /* LoginViewController.m */,
 			);
 			name = Controllers;
+			sourceTree = "<group>";
+		};
+		28E94A8B147DB30E002E8343 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				28E94A8D147DB32D002E8343 /* MenuCell.h */,
+				28E94A8E147DB32D002E8343 /* MenuCell.m */,
+			);
+			name = Views;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1102,6 +1120,8 @@
 				28B855DD147CDCE6004F84EA /* ProfileViewController.m in Sources */,
 				28B855E0147CDDE8004F84EA /* MenuViewController.m in Sources */,
 				28B855ED147CE1A3004F84EA /* LoginViewController.m in Sources */,
+				28E94A8F147DB32D002E8343 /* MenuCell.m in Sources */,
+				28E94A92147DB33C002E8343 /* RolodexViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
