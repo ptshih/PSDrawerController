@@ -1,20 +1,20 @@
 //
-//  ProfileViewController.m
+//  RolodexViewController.m
 //  Rolodex
 //
-//  Created by Peter Shih on 11/22/11.
+//  Created by Peter Shih on 11/23/11.
 //  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import "ProfileViewController.h"
+#import "RolodexViewController.h"
 
-@implementation ProfileViewController
+@implementation RolodexViewController
 
 #pragma mark - Init
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
   self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
   if (self) {
-
+    
   }
   return self;
 }
@@ -29,7 +29,7 @@
 
 #pragma mark - View Config
 - (UIView *)backgroundView {
-  UIImageView *bgView = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"BackgroundBlueprint.jpg"]] autorelease];
+  UIImageView *bgView = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"BackgroundDarkWood.jpg"]] autorelease];
   return bgView;
 }
 

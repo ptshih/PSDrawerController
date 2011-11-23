@@ -3,7 +3,7 @@
 //  Rolodex
 //
 //  Created by Peter Shih on 11/23/11.
-//  Copyright (c) 2011 Peter Shih. All rights reserved.
+//  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
 //
 
 #import "LoginViewController.h"
@@ -49,7 +49,10 @@
 - (void)viewDidAppear:(BOOL)animated {
   [super viewDidAppear:animated];
   
-  [self loginDidSucceed];
+  // Add this to main runloop queue
+  [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+    [self loginDidSucceed];
+  }];
 }
 
 #pragma mark - Login

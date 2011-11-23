@@ -3,10 +3,16 @@
 //  Rolodex
 //
 //  Created by Peter Shih on 11/22/11.
-//  Copyright (c) 2011 Peter Shih. All rights reserved.
+//  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
 //
 
 #import "MenuViewController.h"
+
+#import "MenuCell.h"
+
+#import "PSDrawerController.h"
+#import "ProfileViewController.h"
+#import "RolodexViewController.h"
 
 @implementation MenuViewController
 
@@ -59,6 +65,8 @@
   
   // Add a TableView
   [self setupTableViewWithFrame:CGRectMake(0, searchView.bottom, self.view.width, self.view.height - searchView.height) style:UITableViewStylePlain separatorStyle:UITableViewCellSeparatorStyleNone separatorColor:nil];
+  
+  [self loadDataSource];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -78,7 +86,16 @@
   
   // Prepare Data
   
-  [self dataSourceShouldLoadObjects:nil shouldAnimate:NO];
+  // First section
+  NSMutableArray *items = [NSMutableArray array];
+  NSMutableArray *firstSection = [NSMutableArray array];
+  NSDictionary *s0r0 = [NSDictionary dictionaryWithObjectsAndKeys:@"First Controller", @"title", nil];
+  [firstSection addObject:s0r0];
+  NSDictionary *s0r1 = [NSDictionary dictionaryWithObjectsAndKeys:@"Second Controller", @"title", nil];
+  [firstSection addObject:s0r1];
+  [items addObject:firstSection];
+  
+  [self dataSourceShouldLoadObjects:items shouldAnimate:NO];
 }
 
 - (void)dataSourceDidLoad {
@@ -86,18 +103,28 @@
 }
 
 #pragma mark - TableView
+- (Class)cellClassAtIndexPath:(NSIndexPath *)indexPath {
+  return [MenuCell class];
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+  Class cellClass = [self cellClassAtIndexPath:indexPath];
+  return [cellClass rowHeight];
+}
+
 - (void)tableView:(UITableView *)tableView configureCell:(id)cell atIndexPath:(NSIndexPath *)indexPath {
   NSMutableDictionary *object = [[self.items objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
   [cell fillCellWithObject:object];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-  PSCell *cell = nil;
-  NSString *reuseIdentifier = [PSCell reuseIdentifier];
+  Class cellClass = [self cellClassAtIndexPath:indexPath];
+  id cell = nil;
+  NSString *reuseIdentifier = [cellClass reuseIdentifier];
   
-  cell = (PSCell *)[tableView dequeueReusableCellWithIdentifier:reuseIdentifier];
+  cell = [tableView dequeueReusableCellWithIdentifier:reuseIdentifier];
   if(cell == nil) { 
-    cell = [[[PSCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:reuseIdentifier] autorelease];
+    cell = [[[cellClass alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:reuseIdentifier] autorelease];
     [_cellCache addObject:cell];
   }
   
@@ -111,6 +138,23 @@
   
   NSMutableDictionary *object = [[self.items objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
 
+  if (indexPath.row == 0) {
+    ProfileViewController *pvc = [[ProfileViewController alloc] initWithNibName:nil bundle:nil];
+    UINavigationController *nc = [[[[NSBundle mainBundle] loadNibNamed:@"PSNavigationController" owner:self options:nil] lastObject] retain];
+    nc.viewControllers = [NSArray arrayWithObject:pvc];
+    [pvc release];
+    
+    [APP_DELEGATE.drawerController setViewControllers:[NSArray arrayWithObjects:self, nc, nil]];
+    [nc release];
+  } else if (indexPath.row == 1) {
+    RolodexViewController *rvc = [[RolodexViewController alloc] initWithNibName:nil bundle:nil];
+    UINavigationController *nc = [[[[NSBundle mainBundle] loadNibNamed:@"PSNavigationController" owner:self options:nil] lastObject] retain];
+    nc.viewControllers = [NSArray arrayWithObject:rvc];
+    [rvc release];
+    
+    [APP_DELEGATE.drawerController setViewControllers:[NSArray arrayWithObjects:self, nc, nil]];
+    [nc release];
+  }
 }
 
 #pragma mark - UITextFieldDelegate

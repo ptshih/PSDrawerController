@@ -1,14 +1,13 @@
 //
-//  LoginViewController.h
+//  MenuCell.h
 //  Rolodex
 //
 //  Created by Peter Shih on 11/23/11.
 //  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
-#import "PSViewController.h"
+#import "PSCell.h"
 
-@interface LoginViewController : PSViewController
+@interface MenuCell : PSCell
 
 @end

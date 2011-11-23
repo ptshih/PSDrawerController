@@ -1,5 +1,5 @@
 //
-//  LoginViewController.h
+//  RolodexViewController.h
 //  Rolodex
 //
 //  Created by Peter Shih on 11/23/11.
@@ -9,6 +9,6 @@
 #import <UIKit/UIKit.h>
 #import "PSViewController.h"
 
-@interface LoginViewController : PSViewController
+@interface RolodexViewController : PSViewController
 
 @end

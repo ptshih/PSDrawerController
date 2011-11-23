@@ -3,7 +3,7 @@
 //  Rolodex
 //
 //  Created by Peter Shih on 11/15/11.
-//  Copyright (c) 2011 Peter Shih. All rights reserved.
+//  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
 //
 
 #import "AppDelegate.h"
@@ -23,6 +23,7 @@
 @implementation AppDelegate
 
 @synthesize window = _window;
+@synthesize drawerController = _drawerController;
 
 + (void)initialize {
   [self setupDefaults];
@@ -69,16 +70,16 @@
   nc.viewControllers = [NSArray arrayWithObject:pvc];
   [pvc release];
   
-  PSDrawerController *dc = [[PSDrawerController alloc] initWithNibName:nil bundle:nil];
-  [dc setViewControllers:[NSArray arrayWithObjects:mvc, nc, nil]];
+  _drawerController = [[PSDrawerController alloc] initWithNibName:nil bundle:nil];
+  [_drawerController setViewControllers:[NSArray arrayWithObjects:mvc, nc, nil]];
   [mvc release];
   [nc release];
   
-  [self.window addSubview:dc.view];
+  [self.window addSubview:_drawerController.view];
   
   // Login
   LoginViewController *lvc = [[LoginViewController alloc] initWithNibName:nil bundle:nil];
-  [dc presentModalViewController:lvc animated:NO];
+  [_drawerController presentModalViewController:lvc animated:NO];
   [lvc release];
   
   return YES;
@@ -132,6 +133,7 @@
 
 - (void)dealloc
 {
+  [_drawerController release];
   [_window release];
   [super dealloc];
 }

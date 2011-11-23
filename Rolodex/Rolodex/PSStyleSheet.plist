@@ -36,10 +36,10 @@
 		<key>shadowOffset</key>
 		<string>{0,1}</string>
 	</dict>
-	<key>searchField</key>
+	<key>menuCellTitle</key>
 	<dict>
 		<key>fontName</key>
-		<string>HelveticaNeue</string>
+		<string>HelveticaNeue-Bold</string>
 		<key>fontSize</key>
 		<integer>14</integer>
 		<key>textColor</key>
@@ -47,7 +47,20 @@
 		<key>shadowColor</key>
 		<string>0x000000</string>
 		<key>shadowOffset</key>
-		<string>{0,0}</string>
+		<string>{0,-1}</string>
+	</dict>
+	<key>menuCellSubtitle</key>
+	<dict>
+		<key>fontName</key>
+		<string>HelveticaNeue-Bold</string>
+		<key>fontSize</key>
+		<integer>14</integer>
+		<key>textColor</key>
+		<string>0xcdcdcd</string>
+		<key>shadowColor</key>
+		<string>0x000000</string>
+		<key>shadowOffset</key>
+		<string>{0,-1}</string>
 	</dict>
 </dict>
 </plist>
