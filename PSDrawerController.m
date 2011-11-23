@@ -46,9 +46,11 @@
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
   self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
   if (self) {
-    _state = PSDrawerStateClosed;
+    // Set default state variables
+    _opened = NO;
     _hidden = NO;
     
+    // Add observers
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(slide:) name:kPSDrawerSlide object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(hide:) name:kPSDrawerHide object:nil];
   }
@@ -62,6 +64,10 @@
 }
 
 - (void)dealloc {
+  // Remove observers
+  [[NSNotificationCenter defaultCenter] removeObserver:self name:kPSDrawerSlide object:nil];
+  [[NSNotificationCenter defaultCenter] removeObserver:self name:kPSDrawerHide object:nil];
+  
   RELEASE_SAFELY(_bottomViewController);
   RELEASE_SAFELY(_topViewController);
   [super dealloc];
@@ -69,28 +75,33 @@
 
 #pragma mark - Config View Controllers
 - (void)setViewControllers:(NSArray *)viewControllers {
+  // Make sure there are 2 view controllers in the array
   if ([viewControllers count] == 2) {
     UIViewController *bottomViewController = [viewControllers objectAtIndex:0];
     UIViewController *topViewController = [viewControllers objectAtIndex:1];
     
     // Check to see if the view controllers actually changed
+    // If the view controllers haven't changed, don't unload them
     if (![_bottomViewController isEqual:bottomViewController]) {
+      [_bottomViewController.view removeFromSuperview];
       RELEASE_SAFELY(_bottomViewController);
       _bottomViewController = [bottomViewController retain];
       
       // Set Frame
-      _bottomViewController.view.frame = self.view.bounds;
-      _bottomViewController.view.width = self.view.width - DRAWER_GAP;
+      CGFloat bottomWidth = _hidden ? self.view.width : self.view.width - DRAWER_GAP;
+      _bottomViewController.view.frame = CGRectMake(0, 0, bottomWidth, self.view.height);
       
       [self.view insertSubview:_bottomViewController.view atIndex:0];
     }
     
     if (![_topViewController isEqual:topViewController]) {
+      [_topViewController.view removeFromSuperview];
       RELEASE_SAFELY(_topViewController);
       _topViewController = [topViewController retain];
       
       // Set Frame
-      _topViewController.view.frame = self.view.bounds;
+      CGFloat topLeft = _opened ? (_hidden ? self.view.width : self.view.width - DRAWER_GAP) : (_hidden ? self.view.width : 0);
+      _topViewController.view.frame = CGRectMake(topLeft, 0, self.view.width, self.view.height);
       
       [self.view insertSubview:_topViewController.view atIndex:1];
     }
@@ -101,16 +112,18 @@
 - (void)slide:(NSNotification *)notification {
   UIViewAnimationOptions animationOptions;
   CGFloat left = 0;
-  if (_state == PSDrawerStateClosed) {
-    animationOptions = UIViewAnimationOptionCurveEaseOut;
-    left = self.view.width - DRAWER_GAP;
-    _state = PSDrawerStateOpen;
-    [_bottomViewController viewWillAppear:YES];
-  } else if (_state == PSDrawerStateOpen) {
+  if (_opened) {
+    // close
+    _opened = NO;
     animationOptions = UIViewAnimationOptionCurveEaseOut;
     left = 0;
-    _state = PSDrawerStateClosed;
-    [_bottomViewController viewWillDisappear:NO];
+    [_bottomViewController viewWillDisappear:YES];
+  } else {
+    // open
+    _opened = YES;
+    animationOptions = UIViewAnimationOptionCurveEaseOut;
+    left = self.view.width - DRAWER_GAP;
+    [_bottomViewController viewWillAppear:YES];
   }
   
   [UIView animateWithDuration:0.4
@@ -120,9 +133,9 @@
                      _topViewController.view.left = left;
                    }
                    completion:^(BOOL finished){
-                     if (_state == PSDrawerStateOpen) {
+                     if (_opened) {
                        [_bottomViewController viewDidAppear:YES];
-                     } else if (_state == PSDrawerStateClosed) {
+                     } else {
                        [_bottomViewController viewDidDisappear:YES];
                      }
                    }];
@@ -139,9 +152,9 @@
                    animations:^{
                      if (_hidden) {
                        _bottomViewController.view.width = self.view.width - DRAWER_GAP;
-                       if (_state == PSDrawerStateOpen) {
+                       if (_opened) {
                          _topViewController.view.left = self.view.width - DRAWER_GAP;
-                       } else if (_state == PSDrawerStateClosed) {
+                       } else {
                          _topViewController.view.left = 0;
                        }
                        _hidden = NO;

@@ -41,13 +41,17 @@
 #define kPSDrawerSlide @"PSDrawerSlide"
 #define kPSDrawerHide @"PSDrawerHide"
 
+/**
+ Currently unused...
+ */
 typedef enum {
   PSDrawerStateClosed = 1,
   PSDrawerStateOpen = 2
 } PSDrawerState;
 
 @interface PSDrawerController : PSViewController {
-  PSDrawerState _state;
+//  PSDrawerState _state;
+  BOOL _opened;
   BOOL _hidden;
   
   UIViewController *_bottomViewController;
