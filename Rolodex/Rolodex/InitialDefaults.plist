@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>isLoggedIn</key>
+	<false/>
+	<key>isFirstLaunch</key>
+	<true/>
+	<key>lastExitDate</key>
+	<date>1970-01-01T08:00:00Z</date>
+	<key>facebookExtendedPermissions</key>
+	<array/>
+</dict>
+</plist>
