@@ -1,3 +1,7 @@
+# This is a WORK IN PROGRESS
+
+### For a demo project that uses PSKit, visit http://github.com/ptshih/Rolodex
+
 LICENSE
 ---
 Copyright (C) 2011 Peter Shih. All rights reserved.
