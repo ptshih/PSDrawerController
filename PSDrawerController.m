@@ -51,8 +51,8 @@
     _hidden = NO;
     
     // Add observers
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(slide:) name:kPSDrawerSlide object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(hide:) name:kPSDrawerHide object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(slide) name:kPSDrawerSlide object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(hide) name:kPSDrawerHide object:nil];
   }
   return self;
 }
@@ -109,7 +109,7 @@
 }
 
 #pragma mark - Slide Drawer
-- (void)slide:(NSNotification *)notification {
+- (void)slide {
   UIViewAnimationOptions animationOptions;
   CGFloat left = 0;
   if (_opened) {
@@ -142,7 +142,7 @@
 }
 
 #pragma mark - Hide Drawer
-- (void)hide:(NSNotification *)notification {
+- (void)hide {
   UIViewAnimationOptions animationOptions;
   animationOptions = UIViewAnimationOptionCurveEaseOut;
   

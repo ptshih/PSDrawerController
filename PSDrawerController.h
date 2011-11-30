@@ -68,12 +68,12 @@ typedef enum {
 /**
  This method slides the top controller partially off the screen.
  */
-- (void)slide:(NSNotification *)notification;
+- (void)slide;
 
 #pragma mark - Hide Drawer
 /**
  This method slides the top controller completely off the screen.
  */
-- (void)hide:(NSNotification *)notification;
+- (void)hide;
 
 @end
