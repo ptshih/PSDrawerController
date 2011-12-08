@@ -38,42 +38,76 @@
 #import <UIKit/UIKit.h>
 #import "PSViewController.h"
 
-#define kPSDrawerSlide @"PSDrawerSlide"
-#define kPSDrawerHide @"PSDrawerHide"
-
-/**
- Currently unused...
- */
 typedef enum {
   PSDrawerStateClosed = 1,
-  PSDrawerStateOpen = 2
+  PSDrawerStateOpenLeft = 2,
+  PSDrawerStateOpenRight = 3,
+  PSDrawerStateHiddenLeft = 4,
+  PSDrawerStateHiddenRight = 5
 } PSDrawerState;
 
+typedef enum{
+  PSDrawerPositionLeft = 1,
+  PSDrawerPositionRight = 2
+} PSDrawerPosition;
+
 @interface PSDrawerController : PSViewController {
-//  PSDrawerState _state;
-  BOOL _opened;
-  BOOL _hidden;
+  PSDrawerState _state;
   
-  UIViewController *_bottomViewController;
-  UIViewController *_topViewController;
+  UIViewController *_rootViewController;
+  UIViewController *_leftViewController;
+  UIViewController *_rightViewController;
 }
 
-#pragma mark - Config View Controllers
+@property (nonatomic, retain) UIViewController *rootViewController;
+@property (nonatomic, retain, readonly) UIViewController *leftViewController;
+@property (nonatomic, retain, readonly) UIViewController *rightViewController;
+
 /**
- The array in this property must contain exactly two view controllers. The first view controller is the bottom (navigation) controller. The second view controller is the top (root) controller.
+ Initializes and returns a newly created drawer controller
+ 
+ @param rootViewController The view controller that resides on the top of the stack
+ @param leftViewController The view controller that represents the left drawer (optional)
+ @param rightViewController The view controller that represents the right drawer (optiona)
+ 
+ @return The initialized drawer controller object or nil if there was a problem initializing the object.
  */
-- (void)setViewControllers:(NSArray *)viewControllers;
+- (id)initWithRootViewController:(UIViewController *)rootViewController leftViewController:(UIViewController *)leftViewController rightViewController:(UIViewController *)rightViewController;
 
 #pragma mark - Slide Drawer
 /**
- This method slides the top controller partially off the screen.
+ This method slides the top controller partially off the screen either to the left side or the right side.
+ 
+ @param position Choose either PSDrawerPostionLeft or PSDrawerPositionRight
  */
-- (void)slide;
+- (void)slideWithPosition:(PSDrawerPosition)position;
+
+/**
+ Slides to show the left drawer, partially hiding the root controller
+ */
+- (void)slideFromLeft;
+
+/**
+ Slides to show the right drawer, partially hiding the root controller
+ */
+- (void)slideFromRight;
 
 #pragma mark - Hide Drawer
 /**
  This method slides the top controller completely off the screen.
+ 
+  @param position Choose either PSDrawerPostionLeft or PSDrawerPositionRight
  */
-- (void)hide;
+- (void)hideWithPosition:(PSDrawerPosition)position;
+
+/**
+ Slides to show the left drawer, completely hiding the root controller
+ */
+- (void)hideFromLeft;
+
+/**
+ Slides to show the right drawer, completely hiding the root controller
+ */
+- (void)hideFromRight;
 
 @end

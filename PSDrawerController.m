@@ -42,127 +42,176 @@
 
 @implementation PSDrawerController
 
+@synthesize rootViewController = _rootViewController;
+@synthesize leftViewController = _leftViewController;
+@synthesize rightViewController = _rightViewController;
+
 #pragma mark - Init
+- (id)initWithRootViewController:(UIViewController *)rootViewController leftViewController:(UIViewController *)leftViewController rightViewController:(UIViewController *)rightViewController {
+  self = [self initWithNibName:nil bundle:nil];
+  if (self) {
+    _rootViewController = [rootViewController retain];
+    _leftViewController = [leftViewController retain];
+    _rightViewController = [rightViewController retain];
+  }
+  return self;
+}
+
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
   self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
   if (self) {
     // Set default state variables
-    _opened = NO;
-    _hidden = NO;
-    
-    // Add observers
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(slide) name:kPSDrawerSlide object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(hide) name:kPSDrawerHide object:nil];
+    _state = PSDrawerStateClosed;
   }
   return self;
 }
 
 - (void)viewDidUnload {
-  RELEASE_SAFELY(_bottomViewController);
-  RELEASE_SAFELY(_topViewController);
   [super viewDidUnload];
 }
 
-- (void)dealloc {
-  // Remove observers
-  [[NSNotificationCenter defaultCenter] removeObserver:self name:kPSDrawerSlide object:nil];
-  [[NSNotificationCenter defaultCenter] removeObserver:self name:kPSDrawerHide object:nil];
-  
-  RELEASE_SAFELY(_bottomViewController);
-  RELEASE_SAFELY(_topViewController);
+- (void)dealloc {  
+  RELEASE_SAFELY(_rootViewController);
+  RELEASE_SAFELY(_leftViewController);
+  RELEASE_SAFELY(_rightViewController);
   [super dealloc];
 }
 
-#pragma mark - Config View Controllers
-- (void)setViewControllers:(NSArray *)viewControllers {
-  // Make sure there are 2 view controllers in the array
-  if ([viewControllers count] == 2) {
-    UIViewController *bottomViewController = [viewControllers objectAtIndex:0];
-    UIViewController *topViewController = [viewControllers objectAtIndex:1];
-    
-    // Check to see if the view controllers actually changed
-    // If the view controllers haven't changed, don't unload them
-    if (![_bottomViewController isEqual:bottomViewController]) {
-      [_bottomViewController.view removeFromSuperview];
-      RELEASE_SAFELY(_bottomViewController);
-      _bottomViewController = [bottomViewController retain];
-      
-      // Set Frame
-      CGFloat bottomWidth = _hidden ? self.view.width : self.view.width - DRAWER_GAP;
-      _bottomViewController.view.frame = CGRectMake(0, 0, bottomWidth, self.view.height);
-      
-      [self.view insertSubview:_bottomViewController.view atIndex:0];
-    }
-    
-    if (![_topViewController isEqual:topViewController]) {
-      [_topViewController.view removeFromSuperview];
-      RELEASE_SAFELY(_topViewController);
-      _topViewController = [topViewController retain];
-      
-      // Set Frame
-      CGFloat topLeft = _opened ? (_hidden ? self.view.width : self.view.width - DRAWER_GAP) : (_hidden ? self.view.width : 0);
-      _topViewController.view.frame = CGRectMake(topLeft, 0, self.view.width, self.view.height);
-      
-      [self.view insertSubview:_topViewController.view atIndex:1];
-    }
+- (void)viewDidLoad {
+  [super viewDidLoad];
+  
+  // Left - Bottom
+  if (_leftViewController) {
+    _leftViewController.view.frame = CGRectMake(0, 0, self.view.width, self.view.height);
+    _leftViewController.view.hidden = YES;
+    [self.view addSubview:_leftViewController.view];
   }
+  
+  // Right - Middle
+  if (_rightViewController) {
+    _rightViewController.view.frame = CGRectMake(0, 0, self.view.width, self.view.height);
+    _rightViewController.view.hidden = YES;
+    [self.view addSubview:_rightViewController.view];
+  }
+  
+  // Root - Top
+  _rootViewController.view.frame = CGRectMake(0, 0, self.view.width, self.view.height);
+  [self.view addSubview:_rootViewController.view];
+}
+
+#pragma mark - View Controller Seters
+- (void)setRootViewController:(UIViewController *)rootViewController {
+  [_rootViewController autorelease];
+  [_rootViewController.view removeFromSuperview];
+  _rootViewController = [rootViewController retain];
+  _rootViewController.view.frame = CGRectMake(0, 0, self.view.width, self.view.height);
+  [self.view addSubview:_rootViewController.view];
+  
+  // Set Root Frame
+  CGFloat topLeft = 0.0;
+  switch (_state) {
+    case PSDrawerStateClosed:
+      topLeft = 0.0;
+      break;
+    case PSDrawerStateOpenLeft:
+      topLeft = self.view.width - DRAWER_GAP;
+      break;
+    case PSDrawerStateOpenRight:
+      topLeft = 0.0 - (self.view.width - DRAWER_GAP);
+      break;
+    default:
+      topLeft = 0.0;
+      break;
+  }
+  _rootViewController.view.frame = CGRectMake(topLeft, 0, self.view.width, self.view.height);
 }
 
 #pragma mark - Slide Drawer
-- (void)slide {
+- (void)slideFromLeft {
+  [self slideWithPosition:PSDrawerPositionLeft];
+}
+
+- (void)slideFromRight {
+  [self slideWithPosition:PSDrawerPositionRight];
+}
+
+- (void)slideWithPosition:(PSDrawerPosition)position {
   UIViewAnimationOptions animationOptions;
+  animationOptions = UIViewAnimationOptionCurveEaseOut;
   CGFloat left = 0;
-  if (_opened) {
-    // close
-    _opened = NO;
-    animationOptions = UIViewAnimationOptionCurveEaseOut;
+  BOOL opened = !(_state == PSDrawerStateClosed);
+  if (opened) {
     left = 0;
-    [_bottomViewController viewWillDisappear:YES];
+    if (position == PSDrawerPositionLeft) {
+      [_leftViewController viewWillDisappear:YES];
+    } else if (position == PSDrawerPositionRight) {
+      [_rightViewController viewWillDisappear:YES];
+    }
   } else {
-    // open
-    _opened = YES;
-    animationOptions = UIViewAnimationOptionCurveEaseOut;
-    left = self.view.width - DRAWER_GAP;
-    [_bottomViewController viewWillAppear:YES];
+    if (position == PSDrawerPositionLeft) {
+      left = self.view.width - DRAWER_GAP;
+      [_leftViewController viewWillAppear:YES];
+      _leftViewController.view.hidden = NO;
+    } else if (position == PSDrawerPositionRight) {
+      left = 0 - (self.view.width - DRAWER_GAP);
+      [_rightViewController viewWillAppear:YES];
+      _rightViewController.view.hidden = NO;
+    }
   }
-  
-  [UIView animateWithDuration:0.4
-                        delay:0.0
-                      options:animationOptions
-                   animations:^{
-                     _topViewController.view.left = left;
-                   }
-                   completion:^(BOOL finished){
-                     if (_opened) {
-                       [_bottomViewController viewDidAppear:YES];
-                     } else {
-                       [_bottomViewController viewDidDisappear:YES];
+
+  void (^slide)(BOOL, PSDrawerPosition) = ^(BOOL opened, PSDrawerPosition position) {
+    [UIView animateWithDuration:0.4
+                          delay:0.0
+                        options:animationOptions
+                     animations:^{
+                       _rootViewController.view.left = left;
                      }
-                   }];
+                     completion:^(BOOL finished){
+                       if (!opened) {
+                         if (position == PSDrawerPositionLeft) {
+                           [_leftViewController viewDidAppear:YES];
+                           _state = PSDrawerStateOpenLeft;
+                         } else if (position == PSDrawerPositionRight) {
+                           [_rightViewController viewDidAppear:YES];
+                           _state = PSDrawerStateOpenRight;
+                         }
+                       } else {
+                         if (position == PSDrawerPositionLeft) {
+                           [_leftViewController viewDidDisappear:YES];
+                           _leftViewController.view.hidden = YES;
+                         } else if (position == PSDrawerPositionRight) {
+                           [_rightViewController viewDidAppear:YES];
+                           _rightViewController.view.hidden = YES;
+                         }
+                         _state = PSDrawerStateClosed;
+                       }
+                     }];
+  };
+
+  slide(opened, position); // execute block
 }
 
 #pragma mark - Hide Drawer
-- (void)hide {
+- (void)hideFromLeft {
+  [self hideWithPosition:PSDrawerPositionLeft];
+}
+
+- (void)hideFromRight {
+  [self hideWithPosition:PSDrawerPositionRight];
+}
+
+- (void)hideWithPosition:(PSDrawerPosition)position {
   UIViewAnimationOptions animationOptions;
   animationOptions = UIViewAnimationOptionCurveEaseOut;
-  
   [UIView animateWithDuration:0.4
                         delay:0.0
                       options:animationOptions
                    animations:^{
-                     if (_hidden) {
-                       _bottomViewController.view.width = self.view.width - DRAWER_GAP;
-                       if (_opened) {
-                         _topViewController.view.left = self.view.width - DRAWER_GAP;
-                       } else {
-                         _topViewController.view.left = 0;
-                       }
-                       _hidden = NO;
-                     } else {
-                       _bottomViewController.view.width = self.view.width;
-                       _topViewController.view.left = self.view.width;
-                       _hidden = YES;
-                     }
+                     if (position == PSDrawerPositionLeft) {
+                       _rootViewController.view.left = self.view.width;
+                     } else if (position == PSDrawerPositionRight) {
+                       _rootViewController.view.left = 0 - self.view.width;
+                     }                     
                    }
                    completion:^(BOOL finished){
                    }];
