@@ -37,7 +37,6 @@
 
 #import "PSDrawerController.h"
 
-#define DRAWER_WIDTH 260.0
 #define DRAWER_GAP 60.0
 
 @implementation PSDrawerController
@@ -128,20 +127,30 @@
 
 #pragma mark - Slide Drawer
 - (void)slideFromLeft {
-  [self slideWithPosition:PSDrawerPositionLeft];
+  [self slideWithPosition:PSDrawerPositionLeft hidden:NO animated:YES];
 }
 
 - (void)slideFromRight {
-  [self slideWithPosition:PSDrawerPositionRight];
+  [self slideWithPosition:PSDrawerPositionRight hidden:NO animated:YES];
 }
 
-- (void)slideWithPosition:(PSDrawerPosition)position {
-  UIViewAnimationOptions animationOptions;
-  animationOptions = UIViewAnimationOptionCurveEaseOut;
-  CGFloat left = 0;
+- (void)hideFromLeft {
+  [self slideWithPosition:PSDrawerPositionLeft hidden:YES animated:YES];
+}
+
+- (void)hideFromRight {
+  [self slideWithPosition:PSDrawerPositionRight hidden:YES animated:YES];
+}
+
+- (void)slideWithPosition:(PSDrawerPosition)position hidden:(BOOL)hidden animated:(BOOL)animated {
+  UIViewAnimationOptions animationOptions = UIViewAnimationOptionCurveEaseOut;
+  NSTimeInterval animationDuration = animated ? 0.4 : 0.0;
+  CGFloat left = 0.0;
   BOOL opened = !(_state == PSDrawerStateClosed);
+  
+  left = opened ? 0.0 : (hidden ? self.view.width : self.view.width - DRAWER_GAP);
+
   if (opened) {
-    left = 0;
     if (position == PSDrawerPositionLeft) {
       [_leftViewController viewWillDisappear:YES];
     } else if (position == PSDrawerPositionRight) {
@@ -149,71 +158,41 @@
     }
   } else {
     if (position == PSDrawerPositionLeft) {
-      left = self.view.width - DRAWER_GAP;
+      left *= 1;
       [_leftViewController viewWillAppear:YES];
       _leftViewController.view.hidden = NO;
     } else if (position == PSDrawerPositionRight) {
-      left = 0 - (self.view.width - DRAWER_GAP);
+      left *= -1;
       [_rightViewController viewWillAppear:YES];
       _rightViewController.view.hidden = NO;
     }
   }
-
-  void (^slide)(BOOL, PSDrawerPosition) = ^(BOOL opened, PSDrawerPosition position) {
-    [UIView animateWithDuration:0.4
-                          delay:0.0
-                        options:animationOptions
-                     animations:^{
-                       _rootViewController.view.left = left;
-                     }
-                     completion:^(BOOL finished){
-                       if (!opened) {
-                         if (position == PSDrawerPositionLeft) {
-                           [_leftViewController viewDidAppear:YES];
-                           _state = PSDrawerStateOpenLeft;
-                         } else if (position == PSDrawerPositionRight) {
-                           [_rightViewController viewDidAppear:YES];
-                           _state = PSDrawerStateOpenRight;
-                         }
-                       } else {
-                         if (position == PSDrawerPositionLeft) {
-                           [_leftViewController viewDidDisappear:YES];
-                           _leftViewController.view.hidden = YES;
-                         } else if (position == PSDrawerPositionRight) {
-                           [_rightViewController viewDidAppear:YES];
-                           _rightViewController.view.hidden = YES;
-                         }
-                         _state = PSDrawerStateClosed;
-                       }
-                     }];
-  };
-
-  slide(opened, position); // execute block
-}
-
-#pragma mark - Hide Drawer
-- (void)hideFromLeft {
-  [self hideWithPosition:PSDrawerPositionLeft];
-}
-
-- (void)hideFromRight {
-  [self hideWithPosition:PSDrawerPositionRight];
-}
-
-- (void)hideWithPosition:(PSDrawerPosition)position {
-  UIViewAnimationOptions animationOptions;
-  animationOptions = UIViewAnimationOptionCurveEaseOut;
-  [UIView animateWithDuration:0.4
+  
+  [UIView animateWithDuration:animationDuration
                         delay:0.0
                       options:animationOptions
                    animations:^{
-                     if (position == PSDrawerPositionLeft) {
-                       _rootViewController.view.left = self.view.width;
-                     } else if (position == PSDrawerPositionRight) {
-                       _rootViewController.view.left = 0 - self.view.width;
-                     }                     
+                     _rootViewController.view.left = left;
                    }
                    completion:^(BOOL finished){
+                     if (!opened) {
+                       if (position == PSDrawerPositionLeft) {
+                         [_leftViewController viewDidAppear:YES];
+                         _state = PSDrawerStateOpenLeft;
+                       } else if (position == PSDrawerPositionRight) {
+                         [_rightViewController viewDidAppear:YES];
+                         _state = PSDrawerStateOpenRight;
+                       }
+                     } else {
+                       if (position == PSDrawerPositionLeft) {
+                         [_leftViewController viewDidDisappear:YES];
+                         _leftViewController.view.hidden = YES;
+                       } else if (position == PSDrawerPositionRight) {
+                         [_rightViewController viewDidAppear:YES];
+                         _rightViewController.view.hidden = YES;
+                       }
+                       _state = PSDrawerStateClosed;
+                     }
                    }];
 }
 

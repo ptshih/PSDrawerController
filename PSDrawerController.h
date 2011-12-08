@@ -78,9 +78,11 @@ typedef enum{
 /**
  This method slides the top controller partially off the screen either to the left side or the right side.
  
+ Generally you should use one of the slide/hide convenience methods instead of this method, but this method allows more customization.
+ 
  @param position Choose either PSDrawerPostionLeft or PSDrawerPositionRight
  */
-- (void)slideWithPosition:(PSDrawerPosition)position;
+- (void)slideWithPosition:(PSDrawerPosition)position hidden:(BOOL)hidden animated:(BOOL)animated;
 
 /**
  Slides to show the left drawer, partially hiding the root controller
@@ -91,14 +93,6 @@ typedef enum{
  Slides to show the right drawer, partially hiding the root controller
  */
 - (void)slideFromRight;
-
-#pragma mark - Hide Drawer
-/**
- This method slides the top controller completely off the screen.
- 
-  @param position Choose either PSDrawerPostionLeft or PSDrawerPositionRight
- */
-- (void)hideWithPosition:(PSDrawerPosition)position;
 
 /**
  Slides to show the left drawer, completely hiding the root controller
